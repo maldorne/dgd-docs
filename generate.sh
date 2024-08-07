@@ -13,26 +13,32 @@ FILES=( "ed-quickref" "editor" "Introduction" "parser" )
 for file in "${FILES[@]}"
 do
   cp $file $file.md
+  #   echo "---
+  # title: $file
+  # date: `date '+%Y-%m-%d %H:%M:%S'`
+  # language: en
+  # ---" | cat - $file.md > temp && mv temp $file.md
+
   # pandoc -f commonmark -t markdown -o $file.md $file
 done
 
 
-echo "# DGD Documentation" > readme.md
-echo "" >> readme.md
-echo "This is a collection of markdown files generated from the DGD documentation." >> readme.md
-echo "" >> readme.md
-echo "## General information" >> readme.md
-echo "" >> readme.md
-echo "* [LPC Reference Manual](LPC.md)" >> readme.md
+echo "# DGD Documentation" > index.md
+echo "" >> index.md
+echo "This is a collection of markdown files generated from the DGD documentation." >> index.md
+echo "" >> index.md
+echo "## General information" >> index.md
+echo "" >> index.md
+echo "* [LPC Reference Manual](LPC.md)" >> index.md
 
 for file in "${FILES[@]}"
 do
-  echo "* ["$file"]("$file.md")" >> readme.md
+  echo "* ["$file"]("$file.md")" >> index.md
 done
 
-echo "" >> readme.md
-echo "## kfuns documentation" >> readme.md
-echo "" >> readme.md
+echo "" >> index.md
+echo "## kfuns documentation" >> index.md
+echo "" >> index.md
 
 # remove previously generated markdown files
 rm kfun/*.md
@@ -44,7 +50,7 @@ do
   echo "# "\`$file\` >> kfun/$file.md
   echo "" >> kfun/$file.md
 
-  echo "* ["$file"](kfun/"$file.md")" >> readme.md
+  echo "* ["$file"](kfun/"$file.md")" >> index.md
 
   # read line by line the file and see its contents
   while IFS= read -r line
