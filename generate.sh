@@ -69,7 +69,7 @@ do
   # echo "# "\`$file\` >> kfun/$file.md
   # echo "" >> kfun/$file.md
   echo "---
-title: $file
+title: Kernel function $file
 date: `date '+%Y-%m-%d %H:%M:%S'`
 language: en
 ---" >> kfun/$file.md
