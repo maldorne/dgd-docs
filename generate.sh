@@ -11,7 +11,7 @@ mkdir -p pages
 
 # copy the lpc reference manual
 mkdir -p pages/lpc
-cp lpc.md pages/lpc/index.md
+cp LPC.md pages/lpc/index.md
   echo "---
 title: LPC Reference Manual
 date: `date '+%Y-%m-%d %H:%M:%S'`
