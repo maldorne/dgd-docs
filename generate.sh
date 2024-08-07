@@ -21,7 +21,7 @@ language: en
 # copy every file in the list to a markdown file
 
 # list of files to convert
-FILES=( "ed-quickref" "editor" "Introduction" "parser" )
+FILES=( "Introduction" "parser" "editor" "ed-quickref" )
 
 for file in "${FILES[@]}"
 do
