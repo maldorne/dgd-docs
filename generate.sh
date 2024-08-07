@@ -6,51 +6,78 @@
 
 echo "Converting documentation to markdown..."
 
+# create directory 'pages' if it doesn't exist
+mkdir -p pages
+
+# copy the lpc reference manual
+mkdir -p pages/lpc
+cp lpc.md pages/lpc/index.md
+  echo "---
+title: LPC Reference Manual
+date: `date '+%Y-%m-%d %H:%M:%S'`
+language: en
+---" | cat - pages/lpc/index.md > temp && mv temp pages/lpc/index.md
+
+# copy every file in the list to a markdown file
+
 # list of files to convert
 FILES=( "ed-quickref" "editor" "Introduction" "parser" )
 
-# copy every file in the list to a markdown file
 for file in "${FILES[@]}"
 do
-  cp $file $file.md
-  #   echo "---
-  # title: $file
-  # date: `date '+%Y-%m-%d %H:%M:%S'`
-  # language: en
-  # ---" | cat - $file.md > temp && mv temp $file.md
-
-  # pandoc -f commonmark -t markdown -o $file.md $file
+  mkdir -p pages/$file
+  cp $file pages/$file/index.md
+  echo "---
+title: $file
+date: `date '+%Y-%m-%d %H:%M:%S'`
+language: en
+---
+\`\`\`" | cat - pages/$file/index.md > temp && mv temp pages/$file/index.md
+  echo "\`\`\`" >> pages/$file/index.md
 done
 
-
-echo "# DGD Documentation" > index.md
-echo "" >> index.md
-echo "This is a collection of markdown files generated from the DGD documentation." >> index.md
+# generate a general index
+echo "---
+title: DGD Documentation
+date: `date '+%Y-%m-%d %H:%M:%S'`
+language: en
+---" > index.md
+echo "This is a collection of markdown files automatically generated from [the official DGD documentation](https://github.com/dworkin/lpc-ext)." >> index.md
 echo "" >> index.md
 echo "## General information" >> index.md
 echo "" >> index.md
-echo "* [LPC Reference Manual](LPC.md)" >> index.md
+echo "* [LPC Reference Manual](pages/lpc/)" >> index.md
 
 for file in "${FILES[@]}"
 do
-  echo "* ["$file"]("$file.md")" >> index.md
+  echo "* ["$file"](pages/"$file"/)" >> index.md
 done
 
 echo "" >> index.md
-echo "## kfuns documentation" >> index.md
+echo "## Kernel functions (_kfuns_) documentation" >> index.md
 echo "" >> index.md
 
-# remove previously generated markdown files
-rm kfun/*.md
+# remove previously generated kfuns markdown files
+rm -Rf kfuns
 # list every file in the kfun directory, and store the names in an array
 KFUN_FILES=( $(ls kfun) )
 
 for file in "${KFUN_FILES[@]}"
 do
-  echo "# "\`$file\` >> kfun/$file.md
+  mkdir -p kfuns/$file
+
+  # echo "# "\`$file\` >> kfun/$file.md
+  # echo "" >> kfun/$file.md
+  echo "---
+title: $file
+date: `date '+%Y-%m-%d %H:%M:%S'`
+language: en
+---" >> kfun/$file.md
   echo "" >> kfun/$file.md
 
-  echo "* ["$file"](kfun/"$file.md")" >> index.md
+
+
+  echo "* [\`"$file"\`](kfuns/"$file")" >> index.md
 
   # read line by line the file and see its contents
   while IFS= read -r line
@@ -70,7 +97,7 @@ do
       # read next line
       while read -r line
       do
-        echo $line
+        # echo $line
 
         # if line is "NOTE", break the loop
         if [[ $line == "NOTE" ]]; then
@@ -83,7 +110,9 @@ do
         IFS=', ' read -r -a array <<< "$line"
         for element in "${array[@]}"
         do
-          echo "* ["$element"]("$element.md")" >> kfun/$file.md
+          # change kfun to kfuns inside element
+          element=$(echo $element | sed 's/kfun/kfuns/g')
+          echo "* [\`"$element"\`](../../"$element"/)" >> kfun/$file.md
         done
       done
 
@@ -101,5 +130,7 @@ do
     LAST_LINE=$line
 
   done < kfun/$file
+
+  mv kfun/$file.md kfuns/$file/index.md
 
 done
